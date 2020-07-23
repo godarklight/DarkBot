@@ -13,6 +13,7 @@ namespace DarkBot
 
         public void Load()
         {
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             string pluginsPath = Path.Combine(Environment.CurrentDirectory, "Plugins");
             if (!Directory.Exists(pluginsPath))
             {
@@ -22,7 +23,7 @@ namespace DarkBot
             {
                 try
                 {
-                    Console.WriteLine("Loaded module: " + dllName);
+                    Console.WriteLine("Loading module: " + dllName);
                     assemblies.Add(Assembly.LoadFile(dllName));
                 }
                 catch (Exception e)
@@ -56,5 +57,22 @@ namespace DarkBot
         {
             return services.ToArray();
         }
+
+        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            //This will find and return the assembly requested if it is already loaded
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (assembly.FullName == args.Name)
+                {
+                    //Console.WriteLine("Resolved plugin assembly reference: " + args.Name + " (referenced by " + args.RequestingAssembly.FullName + ")");
+                    return assembly;
+                }
+            }
+
+            //Console.WriteLine("Could not resolve assembly " + args.Name + " referenced by " + args.RequestingAssembly.FullName);
+            return null;
+        }
+
     }
 }
