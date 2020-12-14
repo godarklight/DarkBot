@@ -98,7 +98,7 @@ namespace DarkBot
             }            
         }
 
-        private Task LogAsync(LogMessage log)
+        public static Task LogAsync(LogMessage log)
         {
             Console.WriteLine(log.ToString());
             return Task.CompletedTask;
