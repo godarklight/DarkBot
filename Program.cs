@@ -92,6 +92,8 @@ namespace DarkBot
 
                 // Tokens should be considered secret data and never hard-coded.
                 // We can read from the environment variable to avoid hardcoding.
+                DiscordSocketConfig dsc = new DiscordSocketConfig();
+                dsc.GatewayIntents = GatewayIntents.All;
                 await client.LoginAsync(TokenType.Bot, token);
                 await client.StartAsync();
                 await Task.Delay(Timeout.Infinite);
@@ -107,7 +109,10 @@ namespace DarkBot
         private ServiceProvider ConfigureServices(BotModuleLoader bml)
         {
             ServiceCollection sc = new ServiceCollection();
-            sc.AddSingleton<DiscordSocketClient>();
+            DiscordSocketConfig config = new DiscordSocketConfig();
+            config.GatewayIntents = GatewayIntents.All;
+            DiscordSocketClient client = new DiscordSocketClient(config);
+            sc.AddSingleton<DiscordSocketClient>(client);
             sc.AddSingleton<CommandService>();
             sc.AddSingleton<CommandHandlingService>();
             sc.AddSingleton<HttpClient>();
